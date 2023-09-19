@@ -5,15 +5,18 @@ import {
   Get,
   NotFoundException,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Put,
   Query,
   Req,
   Res,
+  ValidationPipe,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { Task } from './models/task';
+import { addTaskDTO } from './DTO/addTaskDTO';
 
 @Controller('tasks')
 export class TasksController {
@@ -55,22 +58,24 @@ export class TasksController {
   }
 
   @Get('all/:id')
-  getTaskById(@Param('id') taskId, @Res() response: Response) {
+  getTaskById(@Param('id', ParseIntPipe) taskId, @Res() response: Response) {
     console.log(typeof taskId);
 
-    let selectedTask = this.tabTasks.find((t) => t.id === +taskId);
+    let selectedTask = this.tabTasks.find((t) => t.id === taskId);
     if (selectedTask) {
       return response.status(200).json({ result: selectedTask });
     } else throw new NotFoundException("Le task demandé n'existe pas");
   }
 
   @Post('new')
-  addNewTask(@Body() newTask: Task, @Res() response: Response) {
-    const { title, desc, statut } = newTask;
-    console.log(newTask instanceof Task);
+  addNewTask(@Body() newTask: addTaskDTO, @Res() response: Response) {
+    const { title, desc, statut, year } = newTask;
+    console.log(newTask instanceof addTaskDTO);
+
+    console.log(newTask);
 
     if (!this.tabTasks.length) {
-      let uTask = new Task(1, title, desc, statut);
+      let uTask = new Task(1, title, desc, statut, year);
       this.tabTasks.push(uTask);
     } else {
       let uTask = new Task(
@@ -78,6 +83,7 @@ export class TasksController {
         title,
         desc,
         statut,
+        year,
       );
       this.tabTasks.push(uTask);
     }
