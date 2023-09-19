@@ -5,6 +5,7 @@ import {
   NotFoundException,
   Param,
   Post,
+  Query,
   Req,
   Res,
 } from '@nestjs/common';
@@ -15,16 +16,40 @@ import { Task } from './models/task';
 export class TasksController {
   tabTasks = [];
 
-  @Get('all')
-  getAllTasks(@Req() request: Request, @Res() response: Response) {
-    console.log(request);
-    return response.status(200).json({ alltasks: this.tabTasks });
-  }
+  //   @Get('all')
+  //   getAllTasks(@Req() request: Request, @Res() response: Response) {
+  //     console.log(request);
+  //     return response.status(200).json({ alltasks: this.tabTasks });
+  //   }
 
   //   @Get('all/:id/:prenom/:age')
   //   getTaskById(@Param('id') i, @Param('age') a, @Res() response: Response) {
   //     console.log(i, a);
   //   }
+
+  // Version avec une seule propriété extraite à partir de queryparams
+  //   @Get('all')
+  //   getAllTasks(@Res() response: Response, @Query('search') qm) {
+  //     if (qm) {
+  //       const filtredTasks = this.tabTasks.filter((t) =>
+  //         t['statut'].includes(qm),
+  //       );
+  //       return response.status(200).json({ alltasks: filtredTasks });
+  //     }
+  //     return response.status(200).json({ alltasks: this.tabTasks });
+  //   }
+
+  // Version avec tout l'objet queryparams
+  @Get('all')
+  getAllTasks(@Res() response: Response, @Query() qm) {
+    if (qm.search) {
+      const filtredTasks = this.tabTasks.filter((t) =>
+        t['statut'].includes(qm.search),
+      );
+      return response.status(200).json({ alltasks: filtredTasks });
+    }
+    return response.status(200).json({ alltasks: this.tabTasks });
+  }
 
   @Get('all/:id')
   getTaskById(@Param('id') taskId, @Res() response: Response) {
