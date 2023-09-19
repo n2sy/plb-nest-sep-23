@@ -2,6 +2,7 @@ import {
   IsIn,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsPositive,
   IsString,
   MinLength,
@@ -24,6 +25,7 @@ export class addTaskDTO {
   @IsIn(['done', 'todo', 'inprogress'])
   public statut: string;
 
+  //   @IsOptional()
   @IsNumber()
   @IsPositive()
   public year: number;

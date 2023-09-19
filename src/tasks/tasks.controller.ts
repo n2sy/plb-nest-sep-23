@@ -17,6 +17,7 @@ import {
 import { Request, Response } from 'express';
 import { Task } from './models/task';
 import { addTaskDTO } from './DTO/addTaskDTO';
+import { UpperandfusionPipe } from 'src/upperandfusion/upperandfusion.pipe';
 
 @Controller('tasks')
 export class TasksController {
@@ -128,5 +129,12 @@ export class TasksController {
     let i = this.tabTasks.findIndex((t) => t.id == dId);
     this.tabTasks.splice(i, 1);
     return response.status(200).json({ message: 'Suppression réussi du task' });
+  }
+
+  /***************** */
+
+  @Post('testpipe')
+  testPipe(@Body(UpperandfusionPipe) data) {
+    return data;
   }
 }
