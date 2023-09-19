@@ -9,6 +9,7 @@ export class Task {
     public title: string,
     public desc: string,
     public statut: string,
+    public createdAt?: Date,
   ) {
     // this.id = id;
     // this.title = title;

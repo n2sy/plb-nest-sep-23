@@ -1,10 +1,13 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   NotFoundException,
   Param,
+  Patch,
   Post,
+  Put,
   Query,
   Req,
   Res,
@@ -100,5 +103,24 @@ export class TasksController {
   @Post('new1')
   addNewTaskV1(@Body('desc') descNewTask, @Body('statut') statutNewTask) {
     console.log(descNewTask, statutNewTask);
+  }
+
+  @Put('edit/:id')
+  updateTask(@Body() uTask: Task, @Param('id') uId, @Res() response: Response) {
+    let task = this.tabTasks.find((t) => t.id == uId);
+    let i = this.tabTasks.indexOf(task);
+    task.title = uTask.title;
+    task.desc = uTask.desc;
+    task.statut = uTask.statut;
+    this.tabTasks[i] = task;
+    return response.status(200).json({ message: 'Update réussi du task' });
+  }
+
+  @Delete('delete/:id')
+  deleteTask(@Param('id') dId, @Res() response: Response) {
+    //this.tabTasks.filter((t) => t.id != dId);
+    let i = this.tabTasks.findIndex((t) => t.id == dId);
+    this.tabTasks.splice(i, 1);
+    return response.status(200).json({ message: 'Suppression réussi du task' });
   }
 }
