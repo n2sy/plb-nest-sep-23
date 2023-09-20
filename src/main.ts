@@ -11,6 +11,11 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   );
+
+  app.use((req, res, next) => {
+    console.log('Second Middleware');
+  });
+
   await app.listen(3000);
 }
 bootstrap();

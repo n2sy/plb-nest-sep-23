@@ -101,11 +101,11 @@ export class TasksController {
   // }
 
   @Put('edit/:id')
-  updateTask(@Body() uTask: Task, @Param('id') uId, @Res() response: Response) {
-    return response.status(200).json(this.taskSer.updateTask);
+  updateTask(@Body() uTask, @Param('id') uId, @Res() response: Response) {
+    return response.status(200).json(this.taskSer.updateTask(uTask, uId));
   }
 
-  @Delete('delete/:id')
+  @Delete('edit/:id')
   deleteTask(@Param('id') dId, @Res() response: Response) {
     return response.status(200).json(this.taskSer.deleteTask(dId));
   }
