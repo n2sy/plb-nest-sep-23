@@ -19,12 +19,12 @@ async function bootstrap() {
   );
 
   app.use((req, res, next) => {
-    console.log('Second Middleware');
+    //console.log('Second Middleware');
     // res.json({ message: 'Erreur détecté par le second middleware' });
     next();
   });
 
-  app.use(morgan('dev'));
+  // app.use(morgan('dev'));
 
   // app.useGlobalInterceptors(new DurationInterceptor());
 
