@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpStatus,
   NotFoundException,
   Param,
   ParseIntPipe,
@@ -57,14 +58,36 @@ export class TasksController {
   }
 
   @Get('all/:id')
-  getTaskById(@Param('id', ParseIntPipe) taskId, @Res() response: Response) {
-    console.log(typeof taskId);
-
-    let selectedTask = this.tabTasks.find((t) => t.id === taskId);
+  getTaskById(
+    @Param(
+      'id',
+      new ParseIntPipe({
+        errorHttpStatusCode: HttpStatus.NOT_FOUND,
+      }),
+    )
+    taskId,
+    @Res() response: Response,
+  ) {
+    let selectedTask = this.taskSer.getTaskById(taskId);
     if (selectedTask) {
       return response.status(200).json({ result: selectedTask });
     } else throw new NotFoundException("Le task demandé n'existe pas");
   }
+  // @Post('new0')
+  // addNewTaskV0(@Body() newTask: Task, @Res() response: Response) {
+  //   if (!this.tabTasks.length)
+  //     this.tabTasks.push({
+  //       id: 1,
+  //       ...newTask,
+  //     });
+  //   else {
+  //     this.tabTasks.push({
+  //       id: this.tabTasks[this.tabTasks.length - 1].id + 1,
+  //       ...newTask,
+  //     });
+  //   }
+  //   return response.status(201).json({ message: 'Ajout réussi du task' });
+  // }
 
   @Post('new')
   addNewTask(@Body() newTask: addTaskDTO, @Res() response: Response) {
@@ -72,44 +95,26 @@ export class TasksController {
     return response.status(201).json({ message: 'Ajout réussi du task' });
   }
 
-  @Post('new0')
-  addNewTaskV0(@Body() newTask: Task, @Res() response: Response) {
-    if (!this.tabTasks.length)
-      this.tabTasks.push({
-        id: 1,
-        ...newTask,
-      });
-    else {
-      this.tabTasks.push({
-        id: this.tabTasks[this.tabTasks.length - 1].id + 1,
-        ...newTask,
-      });
-    }
-    return response.status(201).json({ message: 'Ajout réussi du task' });
-  }
-
-  @Post('new1')
-  addNewTaskV1(@Body('desc') descNewTask, @Body('statut') statutNewTask) {
-    console.log(descNewTask, statutNewTask);
-  }
+  // @Post('new1')
+  // addNewTaskV1(@Body('desc') descNewTask, @Body('statut') statutNewTask) {
+  //   console.log(descNewTask, statutNewTask);
+  // }
 
   @Put('edit/:id')
   updateTask(@Body() uTask: Task, @Param('id') uId, @Res() response: Response) {
-    let task = this.tabTasks.find((t) => t.id == uId);
-    let i = this.tabTasks.indexOf(task);
-    task.title = uTask.title;
-    task.desc = uTask.desc;
-    task.statut = uTask.statut;
-    this.tabTasks[i] = task;
-    return response.status(200).json({ message: 'Update réussi du task' });
+    return response.status(200).json(this.taskSer.updateTask);
   }
 
   @Delete('delete/:id')
   deleteTask(@Param('id') dId, @Res() response: Response) {
-    //this.tabTasks.filter((t) => t.id != dId);
-    let i = this.tabTasks.findIndex((t) => t.id == dId);
-    this.tabTasks.splice(i, 1);
-    return response.status(200).json({ message: 'Suppression réussi du task' });
+    return response.status(200).json(this.taskSer.deleteTask(dId));
+  }
+
+  @Patch('edit/statut/:id')
+  patchHandler(@Param('id') id, @Body() uTask, @Res() response: Response) {
+    return response
+      .status(200)
+      .json(this.taskSer.changeStatusTask(id, uTask['statut']));
   }
 
   /***************** */
