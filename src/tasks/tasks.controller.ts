@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Headers,
   HttpStatus,
   NotFoundException,
   Param,
@@ -90,7 +91,11 @@ export class TasksController {
   // }
 
   @Post('new')
-  addNewTask(@Body() newTask: addTaskDTO, @Res() response: Response) {
+  addNewTask(
+    @Body() newTask: addTaskDTO,
+    @Res() response: Response,
+    @Headers() headers: Headers,
+  ) {
     this.taskSer.addNewTask(newTask);
     return response.status(201).json({ message: 'Ajout réussi du task' });
   }

@@ -11,6 +11,7 @@ import { SubModule } from './sub/sub.module';
 import { ThirdModule } from './third/third.module';
 import { TasksModule } from './tasks/tasks.module';
 import { FirstMiddleware } from './middlewares/first/first.middleware';
+import { HelmetMiddleware } from '@nest-middlewares/helmet';
 
 @Module({
   imports: [SubModule, ThirdModule, TasksModule],
@@ -30,5 +31,7 @@ export class AppModule implements NestModule {
     //   path: '*',
     //   method: RequestMethod.POST,
     // });
+    HelmetMiddleware.configure({});
+    consumer.apply(HelmetMiddleware).forRoutes('*');
   }
 }
