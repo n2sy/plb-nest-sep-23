@@ -14,6 +14,7 @@ import {
   Query,
   Req,
   Res,
+  UseInterceptors,
   ValidationPipe,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
@@ -21,7 +22,9 @@ import { Task } from './models/task';
 import { addTaskDTO } from './DTO/addTaskDTO';
 import { UpperandfusionPipe } from 'src/upperandfusion/upperandfusion.pipe';
 import { TasksService } from './tasks.service';
+import { DurationInterceptor } from 'src/interceptors/duration/duration.interceptor';
 
+@UseInterceptors(DurationInterceptor)
 @Controller('tasks')
 export class TasksController {
   tabTasks = [];
