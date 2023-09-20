@@ -2,7 +2,7 @@ import { Global, Module } from '@nestjs/common';
 import { SubController } from './sub.controller';
 import { SubService } from './sub.service';
 
-@Global()
+// @Global()
 @Module({
   imports: [],
   controllers: [SubController],

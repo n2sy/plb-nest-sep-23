@@ -18,6 +18,7 @@ import { Request, Response } from 'express';
 import { Task } from './models/task';
 import { addTaskDTO } from './DTO/addTaskDTO';
 import { UpperandfusionPipe } from 'src/upperandfusion/upperandfusion.pipe';
+import { TasksService } from './tasks.service';
 
 @Controller('tasks')
 export class TasksController {
@@ -46,16 +47,13 @@ export class TasksController {
   //     return response.status(200).json({ alltasks: this.tabTasks });
   //   }
 
+  constructor(private taskSer: TasksService) {}
+
   // Version avec tout l'objet queryparams
   @Get('all')
   getAllTasks(@Res() response: Response, @Query() qm) {
-    if (qm.search) {
-      const filtredTasks = this.tabTasks.filter((t) =>
-        t['statut'].includes(qm.search),
-      );
-      return response.status(200).json({ alltasks: filtredTasks });
-    }
-    return response.status(200).json({ alltasks: this.tabTasks });
+    let newTabTasks = this.taskSer.getTasks(qm.search);
+    return response.status(200).json({ alltasks: newTabTasks });
   }
 
   @Get('all/:id')
@@ -70,24 +68,7 @@ export class TasksController {
 
   @Post('new')
   addNewTask(@Body() newTask: addTaskDTO, @Res() response: Response) {
-    const { title, desc, statut, year } = newTask;
-    console.log(newTask instanceof addTaskDTO);
-
-    console.log(newTask);
-
-    if (!this.tabTasks.length) {
-      let uTask = new Task(1, title, desc, statut, year);
-      this.tabTasks.push(uTask);
-    } else {
-      let uTask = new Task(
-        this.tabTasks[this.tabTasks.length - 1].id + 1,
-        title,
-        desc,
-        statut,
-        year,
-      );
-      this.tabTasks.push(uTask);
-    }
+    this.taskSer.addNewTask(newTask);
     return response.status(201).json({ message: 'Ajout réussi du task' });
   }
 

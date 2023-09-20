@@ -6,5 +6,6 @@ import { SubService } from 'src/sub/sub.service';
 @Module({
   imports: [],
   controllers: [ThirdController],
+  providers: [SubService],
 })
 export class ThirdModule {}
