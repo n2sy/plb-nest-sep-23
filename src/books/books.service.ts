@@ -62,4 +62,12 @@ export class BooksService {
   deleteBook(selectedYear) {
     return this.bookRepo.delete({ year: selectedYear });
   }
+
+  softDeleteBook(id) {
+    return this.bookRepo.softDelete({ id });
+  }
+
+  restoreBook(id) {
+    return this.bookRepo.restore({ id });
+  }
 }

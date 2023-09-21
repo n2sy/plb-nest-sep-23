@@ -66,4 +66,20 @@ export class BooksController {
       .status(200)
       .json({ messsage: `Book(s) de l'année ${year} supprimé(s) avec succès` });
   }
+
+  @Delete('softdelete/:id')
+  async softDeleteBook(@Param('id', ParseIntPipe) id, @Res() res: Response) {
+    let result = await this.bookSer.softDeleteBook(id);
+    return res
+      .status(200)
+      .json({ messsage: `Book(s) supprimé(s) avec succès` });
+  }
+
+  @Delete('restore/:id')
+  async restoreBook(@Param('id', ParseIntPipe) id, @Res() res: Response) {
+    let result = await this.bookSer.restoreBook(id);
+    return res
+      .status(200)
+      .json({ messsage: `Book(s) restauré(s) avec succès` });
+  }
 }
