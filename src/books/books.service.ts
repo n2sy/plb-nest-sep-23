@@ -70,4 +70,14 @@ export class BooksService {
   restoreBook(id) {
     return this.bookRepo.restore({ id });
   }
+
+  async softRemoveBook(id) {
+    let b = await this.getBookById(id);
+    return this.bookRepo.softRemove(b);
+  }
+
+  async recoverBook(id) {
+    let b = await this.getBookById(id);
+    return this.bookRepo.recover({ id: 6 });
+  }
 }
