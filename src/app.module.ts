@@ -15,6 +15,7 @@ import { HelmetMiddleware } from '@nest-middlewares/helmet';
 import { BooksModule } from './books/books.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { BookEntity } from './books/entities/book.entity';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -22,13 +23,16 @@ import { BookEntity } from './books/entities/book.entity';
     ThirdModule,
     TasksModule,
     BooksModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: '127.0.0.1',
-      port: 8889,
-      username: 'root',
-      password: 'root',
-      database: 'booksplb',
+      host: process.env.DB_HOST,
+      port: parseInt(process.env.DB_PORT),
+      username: process.env.DB_USERNAME,
+      password: process.env.X,
+      database: process.env.DB_NAME,
       // entities : [BookEntity],
       // entities: ['dist/**/*.entity{.ts, .js}'],
       // logging : true,
@@ -40,6 +44,7 @@ import { BookEntity } from './books/entities/book.entity';
   providers: [AppService],
 })
 export class AppModule implements NestModule {
+  constructor(private configSer: ConfigService) {}
   configure(consumer: MiddlewareConsumer) {
     // V1
     //consumer.apply(FirstMiddleware).forRoutes('tasks/all');
