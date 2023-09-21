@@ -99,6 +99,16 @@ export class BooksController {
     return res.status(200).json(result);
   }
 
+  @Get('statv2')
+  async getBooksYearStatV2(
+    @Body('year1', ParseIntPipe) y1,
+    @Body('year2', ParseIntPipe) y2,
+    @Res() res: Response,
+  ) {
+    let result = await this.bookSer.nbBooksPerYearV2(y1, y2);
+    return res.status(200).json(result);
+  }
+
   @Get(':id')
   async getBook(@Param('id') id, @Res() res: Response) {
     const b = await this.bookSer.getBookById(id);

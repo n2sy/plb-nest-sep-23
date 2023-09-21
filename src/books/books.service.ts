@@ -90,4 +90,14 @@ export class BooksService {
 
     // console.log(a.getSql());
   }
+
+  nbBooksPerYearV2(yearMin: number, yearMax: number) {
+    const qb = this.bookRepo.createQueryBuilder('book');
+    return qb
+      .select('book.year, count(book.id) as nbDeBooks')
+      .where('book.year >= :y1 and book.year <= :y2')
+      .setParameters({ y1: yearMin, y2: yearMax })
+      .groupBy('book.year')
+      .getRawMany();
+  }
 }
