@@ -45,6 +45,7 @@ export class BooksService {
   async updateBook(uBook: Partial<AddBookDTO>, uId) {
     console.log(uBook);
 
+    // Preload retourne indefined si elle trouve pas l'entité cible dans la BD
     const updatedBook = await this.bookRepo.preload({
       id: uId,
       ...uBook,
@@ -52,5 +53,13 @@ export class BooksService {
     console.log('updated book', updatedBook);
 
     return this.bookRepo.save(updatedBook);
+  }
+
+  removeBook(dBook) {
+    return this.bookRepo.remove(dBook);
+  }
+
+  deleteBook(selectedYear) {
+    return this.bookRepo.delete({ year: selectedYear });
   }
 }

@@ -8,6 +8,9 @@ import {
   Param,
   Put,
   ParseIntPipe,
+  Delete,
+  NotFoundException,
+  Query,
 } from '@nestjs/common';
 import { BooksService } from './books.service';
 import { Request, Response } from 'express';
@@ -43,5 +46,24 @@ export class BooksController {
   ) {
     const result = await this.bookSer.updateBook(uBook, id);
     return res.status(200).json(result);
+  }
+
+  @Delete('remove/:id')
+  async removeBook(@Param('id', ParseIntPipe) id, @Res() res: Response) {
+    const bookToDelete = await this.bookSer.getBookById(id);
+    if (!bookToDelete)
+      throw new NotFoundException("L'id du livre recherché n'existe pas");
+    //const bookToDelete2 = await this.bookSer.getBookById(2);
+    // let result = await this.bookSer.removeBook([bookToDelete, bookToDelete2]);
+    let result = await this.bookSer.removeBook(bookToDelete);
+    return res.status(200).json({ messsage: 'Book supprimé avec succès' });
+  }
+
+  @Delete('delete')
+  async deleteBook(@Query('year', ParseIntPipe) year, @Res() res: Response) {
+    let result = await this.bookSer.deleteBook(year);
+    return res
+      .status(200)
+      .json({ messsage: `Book(s) de l'année ${year} supprimé(s) avec succès` });
   }
 }
