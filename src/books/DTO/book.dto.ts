@@ -6,6 +6,7 @@ import {
   IsString,
   MaxLength,
 } from 'class-validator';
+import { AuthorEntity } from '../entities/author.entity';
 
 export class AddBookDTO {
   @IsNotEmpty()
@@ -21,4 +22,7 @@ export class AddBookDTO {
   @IsOptional()
   @IsString()
   editor: string;
+
+  @IsNotEmpty()
+  author: AuthorEntity;
 }

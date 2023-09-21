@@ -3,10 +3,15 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  ManyToMany,
+  ManyToOne,
+  OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { TimeStamp } from '../generics/timestamp';
+import { AuthorEntity } from './author.entity';
 
 @Entity('livre')
 export class BookEntity extends TimeStamp {
@@ -24,4 +29,7 @@ export class BookEntity extends TimeStamp {
 
   @Column()
   editor: string;
+
+  @ManyToOne((type) => AuthorEntity, (author) => author.id)
+  author: AuthorEntity;
 }

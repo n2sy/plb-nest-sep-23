@@ -18,7 +18,6 @@ export class BooksService {
   }
 
   addBook(newBook: AddBookDTO) {
-    this.bookRepo.create();
     return this.bookRepo.save(newBook);
   }
 
