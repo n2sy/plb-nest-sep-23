@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BookEntity } from './entities/book.entity';
 import { Repository } from 'typeorm';
@@ -18,6 +18,39 @@ export class BooksService {
   }
 
   addBook(newBook: AddBookDTO) {
+    this.bookRepo.create();
     return this.bookRepo.save(newBook);
+  }
+
+  async getBookById(myId) {
+    // Version avec async / await
+    //Version avec findOne
+    //const b = await this.bookRepo.findOne({ where: { id: myId } });
+
+    //Version avec findOneBy
+    const b = await this.bookRepo.findOneBy({ id: myId });
+    if (!b) throw new NotFoundException("L'id du livre recherché n'existe pas");
+    return b;
+
+    // Version avec les Promise
+    // this.bookRepo.findOne(id).then(
+    //     (result) => {
+    //         return result
+    //     }
+    // ).catch(err => {
+    //     throw new NotFoundException(err)
+    // })
+  }
+
+  async updateBook(uBook: Partial<AddBookDTO>, uId) {
+    console.log(uBook);
+
+    const updatedBook = await this.bookRepo.preload({
+      id: uId,
+      ...uBook,
+    });
+    console.log('updated book', updatedBook);
+
+    return this.bookRepo.save(updatedBook);
   }
 }
