@@ -32,12 +32,6 @@ export class BooksController {
     return res.status(200).json({ id: result.id, createdAt: result.createdAt });
   }
 
-  @Get(':id')
-  async getBook(@Param('id') id, @Res() res: Response) {
-    const b = await this.bookSer.getBookById(id);
-    return res.status(200).json(b);
-  }
-
   @Put('edit/:id')
   async updateBookById(
     @Param('id', ParseIntPipe) id,
@@ -97,5 +91,17 @@ export class BooksController {
     return res
       .status(200)
       .json({ messsage: `Book(s) supprimé(s) avec succès` });
+  }
+
+  @Get('stat')
+  async getBooksYearStat(@Res() res: Response) {
+    let result = await this.bookSer.nbBooksPerYear();
+    return res.status(200).json(result);
+  }
+
+  @Get(':id')
+  async getBook(@Param('id') id, @Res() res: Response) {
+    const b = await this.bookSer.getBookById(id);
+    return res.status(200).json(b);
   }
 }

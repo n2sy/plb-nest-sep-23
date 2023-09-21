@@ -80,4 +80,14 @@ export class BooksService {
     let b = await this.getBookById(id);
     return this.bookRepo.recover({ id: 6 });
   }
+
+  nbBooksPerYear() {
+    const qb = this.bookRepo.createQueryBuilder('book');
+    return qb
+      .select('book.year, count(book.id) as nbDeBooks')
+      .groupBy('book.year')
+      .getRawMany();
+
+    // console.log(a.getSql());
+  }
 }
