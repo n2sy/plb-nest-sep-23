@@ -53,13 +53,20 @@ export class BooksController {
     return res.status(200).json({ messsage: 'Book supprimé avec succès' });
   }
 
-  @Delete('delete')
-  async deleteBook(@Query('year', ParseIntPipe) year, @Res() res: Response) {
-    let result = await this.bookSer.deleteBook(year);
+  @Delete('delete/:id')
+  async deleteBook(@Param('id', ParseIntPipe) id, @Res() res: Response) {
+    let result = await this.bookSer.deleteBook(id);
     return res
       .status(200)
-      .json({ messsage: `Book(s) de l'année ${year} supprimé(s) avec succès` });
+      .json({ messsage: `Book avec id ${id} supprimé(s) avec succès` });
   }
+  // @Delete('delete')
+  // async deleteBook(@Query('year', ParseIntPipe) year, @Res() res: Response) {
+  //   let result = await this.bookSer.deleteBook(year);
+  //   return res
+  //     .status(200)
+  //     .json({ messsage: `Book(s) de l'année ${year} supprimé(s) avec succès` });
+  // }
 
   @Delete('softdelete/:id')
   async softDeleteBook(@Param('id', ParseIntPipe) id, @Res() res: Response) {

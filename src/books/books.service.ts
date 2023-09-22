@@ -3,33 +3,36 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { BookEntity } from './entities/book.entity';
 import { Repository } from 'typeorm';
 import { AddBookDTO } from './DTO/book.dto';
+import { ArthurService } from './arthur.service';
 
 @Injectable()
 export class BooksService {
   constructor(
     @InjectRepository(BookEntity) private bookRepo: Repository<BookEntity>,
+    private arthurSer: ArthurService,
   ) {}
 
   //   getBooks() : Promise<BookEntity[]> {
   //     return this.bookRepo.find();
   //   }
   getBooks() {
-    return this.bookRepo.find();
+    return this.arthurSer.findAllV2(this.bookRepo);
   }
 
   addBook(newBook: AddBookDTO) {
-    return this.bookRepo.save(newBook);
+    return this.arthurSer.addEntity(newBook, this.bookRepo);
   }
 
-  async getBookById(myId) {
+  getBookById(myId) {
+    return this.arthurSer.getEntityById(myId, this.bookRepo);
     // Version avec async / await
     //Version avec findOne
     //const b = await this.bookRepo.findOne({ where: { id: myId } });
 
     //Version avec findOneBy
-    const b = await this.bookRepo.findOneBy({ id: myId });
-    if (!b) throw new NotFoundException("L'id du livre recherché n'existe pas");
-    return b;
+    // const b = await this.bookRepo.findOneBy({ id: myId });
+    // if (!b) throw new NotFoundException("L'id du livre recherché n'existe pas");
+    // return b;
 
     // Version avec les Promise
     // this.bookRepo.findOne(id).then(
@@ -42,24 +45,19 @@ export class BooksService {
   }
 
   async updateBook(uBook: Partial<AddBookDTO>, uId) {
-    console.log(uBook);
-
-    // Preload retourne indefined si elle trouve pas l'entité cible dans la BD
-    const updatedBook = await this.bookRepo.preload({
-      id: uId,
-      ...uBook,
-    });
-    console.log('updated book', updatedBook);
-
-    return this.bookRepo.save(updatedBook);
+    return this.arthurSer.updateEntity(uBook, uId, this.bookRepo);
   }
 
   removeBook(dBook) {
     return this.bookRepo.remove(dBook);
   }
 
-  deleteBook(selectedYear) {
-    return this.bookRepo.delete({ year: selectedYear });
+  // deleteBook(selectedYear) {
+  //   return this.bookRepo.delete({ year: selectedYear });
+  // }
+
+  deleteBook(selectedId) {
+    return this.bookRepo.delete({ id: selectedId });
   }
 
   softDeleteBook(id) {
