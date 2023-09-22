@@ -16,6 +16,7 @@ import { BooksModule } from './books/books.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { BookEntity } from './books/entities/book.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       synchronize: true,
       autoLoadEntities: true,
     }),
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
