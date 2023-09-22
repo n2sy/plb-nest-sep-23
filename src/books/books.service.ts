@@ -19,7 +19,8 @@ export class BooksService {
     return this.arthurSer.findAllV2(this.bookRepo);
   }
 
-  addBook(newBook: AddBookDTO) {
+  addBook(newBook: AddBookDTO, idUser) {
+    newBook['user'] = idUser;
     return this.arthurSer.addEntity(newBook, this.bookRepo);
   }
 

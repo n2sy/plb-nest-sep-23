@@ -34,8 +34,12 @@ export class BooksController {
 
   @UseGuards(JwtAuthGuard, AdminAuthGuard)
   @Post('add')
-  async addNewBook(@Body() nBook: AddBookDTO, @Res() res: Response) {
-    const result = await this.bookSer.addBook(nBook);
+  async addNewBook(
+    @Body() nBook: AddBookDTO,
+    @Req() req: Request,
+    @Res() res: Response,
+  ) {
+    const result = await this.bookSer.addBook(nBook, req['user']['id']);
     return res.status(200).json({ id: result.id, createdAt: result.createdAt });
   }
 

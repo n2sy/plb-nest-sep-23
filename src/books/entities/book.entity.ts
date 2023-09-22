@@ -12,6 +12,7 @@ import {
 } from 'typeorm';
 import { TimeStamp } from '../generics/timestamp';
 import { AuthorEntity } from './author.entity';
+import { UserEntity } from 'src/auth/entities/user.entity';
 
 @Entity('livre')
 export class BookEntity extends TimeStamp {
@@ -32,4 +33,7 @@ export class BookEntity extends TimeStamp {
 
   @ManyToOne((type) => AuthorEntity, (author) => author.id)
   author: AuthorEntity;
+
+  @ManyToOne((type) => UserEntity, (user) => user.id)
+  user: UserEntity;
 }
