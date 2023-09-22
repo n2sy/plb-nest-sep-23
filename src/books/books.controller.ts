@@ -11,21 +11,28 @@ import {
   Delete,
   NotFoundException,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { BooksService } from './books.service';
 import { Request, Response } from 'express';
 import { AddBookDTO } from './DTO/book.dto';
+import { JwtAuthGuard } from 'src/jwt-auth/jwt-auth.guard';
+import { AdminAuthGuard } from 'src/admin-auth/admin-auth.guard';
 
 @Controller('books')
 export class BooksController {
   constructor(private readonly bookSer: BooksService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Get('all')
-  async getAllBooks(@Res() res: Response) {
+  async getAllBooks(@Req() req: Request, @Res() res: Response) {
+    console.log('USERRRRRR', req['user']);
+
     const allBooks = await this.bookSer.getBooks();
     return res.status(200).json(allBooks);
   }
 
+  @UseGuards(JwtAuthGuard, AdminAuthGuard)
   @Post('add')
   async addNewBook(@Body() nBook: AddBookDTO, @Res() res: Response) {
     const result = await this.bookSer.addBook(nBook);

@@ -8,11 +8,13 @@ import { UserEntity } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { roleEnum } from './generics/roleEnum';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(UserEntity) private userRepo: Repository<UserEntity>,
+    private jwtService: JwtService,
   ) {}
 
   async signUp(credentials) {
@@ -49,10 +51,15 @@ export class AuthService {
     else {
       const comparaison = await bcrypt.compare(pwd, u.password);
       if (comparaison) {
+        const token = this.jwtService.sign({
+          formation: 'plb',
+          identifiant: login,
+          role: u.role,
+        });
         return {
           identifiant: login,
           role: u.role,
-          access_token: 'tokengénéré',
+          access_token: token,
         };
       } else throw new NotFoundException('Wrong Password');
     }
