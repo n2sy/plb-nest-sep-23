@@ -12,12 +12,19 @@ import {
   NotFoundException,
   Query,
   UseGuards,
+  UploadedFile,
+  UseInterceptors,
+  ParseFilePipe,
+  MaxFileSizeValidator,
+  FileTypeValidator,
 } from '@nestjs/common';
 import { BooksService } from './books.service';
-import { Request, Response } from 'express';
+import { Request, Response, Express } from 'express';
 import { AddBookDTO } from './DTO/book.dto';
 import { JwtAuthGuard } from 'src/jwt-auth/jwt-auth.guard';
 import { AdminAuthGuard } from 'src/admin-auth/admin-auth.guard';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
 
 @Controller('books')
 export class BooksController {
@@ -125,6 +132,71 @@ export class BooksController {
   ) {
     let result = await this.bookSer.nbBooksPerYearV2(y1, y2);
     return res.status(200).json(result);
+  }
+
+  @Post('upload-v0')
+  @UseInterceptors(FileInterceptor('file'))
+  uploadFile(@UploadedFile() file: Express.Multer.File) {
+    console.log(file);
+  }
+
+  @Post('upload-v1')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './uploads',
+      }),
+    }),
+  )
+  uploadFileV1(
+    @UploadedFile() file: Express.Multer.File,
+    @Res() res: Response,
+  ) {
+    const reponse = {
+      orginalname: file.originalname,
+      filename: file.filename,
+    };
+    return res.json(reponse);
+  }
+
+  @Post('upload-v2')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './uploads',
+        filename: (req, file, cb) => {
+          const randomName =
+            file.originalname.replace(/\s/g, '').substring(0, 3) +
+            Date.now() +
+            '.' +
+            file.mimetype.slice(-3);
+          cb(null, randomName);
+        },
+      }),
+    }),
+  )
+  uploadFileV2(
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 200000 }),
+          new FileTypeValidator({ fileType: 'image/png' }),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
+    @Res() res: Response,
+  ) {
+    const reponse = {
+      orginalname: file.originalname,
+      filename: file.filename,
+    };
+    return res.json(reponse);
+  }
+
+  @Get('uploads/:filename')
+  getFile(@Res() res: Response, @Param('filename') fn: string) {
+    res.sendFile(fn, { root: 'uploads/' });
   }
 
   @Get(':id')
